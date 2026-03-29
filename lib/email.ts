@@ -1,7 +1,5 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
 export async function sendTicketConfirmation({
   to,
   buyerName,
@@ -18,6 +16,7 @@ export async function sendTicketConfirmation({
   const ticketList = ticketNumbers.map(t => `• ${t}`).join('\n')
   const eventName = process.env.NEXT_PUBLIC_EVENT_NAME || 'Pulse of the Wind Raffle'
   const appUrl   = process.env.NEXT_PUBLIC_APP_URL || 'https://tjsrace.com'
+  const resend   = new Resend(process.env.RESEND_API_KEY)
 
   await resend.emails.send({
     from: process.env.EMAIL_FROM!,
