@@ -1,7 +1,7 @@
-import { createServerClient, type CookieMethodsServer } from '@supabase/ssr'
+import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-type SetAllCookies = Parameters<CookieMethodsServer['setAll']>[0]
+type CookieToSet = { name: string; value: string; options?: Record<string, unknown> }
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -10,8 +10,8 @@ export async function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll()         { return cookieStore.getAll() },
-        setAll(toSet: SetAllCookies)    { try { toSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)) } catch {} },
+        getAll()                        { return cookieStore.getAll() },
+        setAll(toSet: CookieToSet[])    { try { toSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options as Parameters<typeof cookieStore.set>[2])) } catch {} },
       },
     }
   )
@@ -24,8 +24,8 @@ export async function createServiceClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
       cookies: {
-        getAll()      { return cookieStore.getAll() },
-        setAll(toSet: SetAllCookies) { try { toSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options)) } catch {} },
+        getAll()                        { return cookieStore.getAll() },
+        setAll(toSet: CookieToSet[])    { try { toSet.forEach(({ name, value, options }) => cookieStore.set(name, value, options as Parameters<typeof cookieStore.set>[2])) } catch {} },
       },
     }
   )
